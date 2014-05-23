@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<script src="resources/js/jquery.js"></script>
+<script src="resources/js/highstock.js"></script>
+
+<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
+
+
+<script src="resources/js/stomp.js"/></script>
+
+
+<script src="resources/js/vis.js"/></script>
+<link rel="stylesheet" href="resources/css/ladda-themeless.css">
+<script src="resources/js/spin.min.js"></script>
+<script src="resources/js/ladda.js"></script>
+<link href="resources/css/bootstrap.css" rel="stylesheet"/>
+
+<script src="resources/js/bootstrap.js"></script> 
+
+<script src="resources/js/crawler.js"/></script>
+
+<title>CF Crawler</title>
+
+<style type="text/css">
+.dashboard_text {
+	font-family: Verdana;
+	font-size: 20px;
+	color:red;
+	
+}
+#session_table td {
+	font-weight: bold;
+	vertical-align: middle;
+}
+</style>
+
+
+
+</head>
+
+
+<body lang="en" style="background-image: url('resources/images/bg-plain-x.jpg');">
+	<div class="fluid-container" style="margin-top: 20px; margin-left: 20px">
+	<form class="form-horizontal">
+			<div class="form-group">
+				<label for="url" class=" col-md-1 control-label">URL: </label>
+				<div class="col-md-3"><input type="text" class="form-control" id="url" ></div>
+				<label for="depth" class=" col-md-1 control-label">Max depth:</label>
+				
+				<div class="col-md-1">
+					<select class="form-control" id="depth">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+							
+					</select>
+				</div>
+				<div class="col-md-1"><button type="button" id="fetch" class="btn btn-primary ladda-button" data-style="expand-right"><span class="ladda-label">Fetch</span></button></div>
+				<button type="button" id="draw" class="btn btn-primary">Show domain graph</button>
+			</div>
+			
+		
+		</form>
+		<div class="row" style="margin-top: 15px">
+			<div class="col-md-9">
+				<div id="graph" style="width: 100%; height: 600px; border: 1px solid lightgray;"></div>
+			</div>
+			<div class="col-md-3">
+				<table class="table" style="vertical-align: middle;" id="session_table">
+					<tr>
+						<td colspan="2" align="center" class="bg-primary">Session Information</td>
+					</tr>
+					<tr>
+						<td width="30%">Status</td>
+						<td><p id="sessionStatus" style="font-weight: bold;"></p></td>
+					</tr>
+					<tr>
+						<td width="30%">Start</td>
+						<td><p id="sessionStart" style="color: red; font-weight: bold;"/></td>
+					</tr>
+					<tr>
+						<td width="30%">Pages</td>
+						<td><p id="sessionPages" class="dashboard_text"/></td>
+					</tr>
+					<tr>
+						<td width="30%">Links</td>
+						<td><p id="sessionLinks" class="dashboard_text"/></td>
+					</tr>
+					<tr>
+						
+						<td colspan=2 align="center">
+							<div id="pageSecChart" style="height: 100px; width: 100%;"></div>
+							<div><span style="float: left; clear: both">pages/sec:</span> <span id="sessionPageSec" class="dashboard_text"></span></div> 
+						</td>
+					</tr>
+					<tr>
+						<td width="30%">Bytes</td>
+						<td><p id="sessionBytes" class="dashboard_text"/></td>
+					</tr>
+					<tr>
+						
+						<td colspan="2" align="center">
+						<div id="byteSecChart" style="height: 100px; width: 100%;"></div>
+						<div><span style="float: left; clear: both">bytes/sec:</span> <span id="sessionByteSec" class="dashboard_text" ></span></div>
+						
+						</td>
+					</tr>
+					<tr>
+						<td width="30%">Request time</td>
+						<td><p id="sessionTime" class="dashboard_text"/></td>
+					</tr>
+					<tr>
+						<td width="30%">Running time</td>
+						<td><p id="sessionRunning" class="dashboard_text"/></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
