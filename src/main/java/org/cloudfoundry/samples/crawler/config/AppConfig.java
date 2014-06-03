@@ -64,6 +64,11 @@ public class AppConfig {
 	}
 
 	@Bean
+	public ObjectMapper mapper(){
+		return new ObjectMapper();
+	}
+	
+	@Bean
 	public RabbitAdmin admin(ConnectionFactory connection) {
 		return new RabbitAdmin(connection);
 	}

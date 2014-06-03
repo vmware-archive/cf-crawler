@@ -1,6 +1,6 @@
 var session, runningTime, tickTimer, spinner, pagesPerSec, bytesPerSec, start;
-var nodes, edges, graph;
 var chart1, chart2;
+var graph = new DomainGraph();
 var ws = new SockJS(window.location+'stomp');
 var client = Stomp.over(ws);
 client.heartbeat.outgoing = 0;
@@ -21,19 +21,12 @@ Object.defineProperty(Number.prototype,'fileSize',{value:function(a,b,c,d){
 	 +' '+(d?(a[1]+'MGTPEZY')[--d]+a[2]:'Bytes');
 	},writable:false,enumerable:false});
 
-
-nodes = new vis.DataSet();
-edges = new vis.DataSet();
-
 function reset() {
 	 $("#sessionStart").text("");
 	 pageStats = {count:0, bytes:0, links:0, time:0};
 	 lastTick = {count:0, bytes:0, links:0, time:0};
 	 chart1.reset();
 	 chart2.reset();
-	 nodes.clear();
-	 edges.clear();
-	 
 }
 
 
@@ -76,9 +69,9 @@ var onPageMessage = function(frame){
 var onLinkMessage = function(frame){
 	lastTick.time = Date.now();
 	var link = JSON.parse(frame.body);
-	var fromNode = createNode(link.source,0);
-	var toNode = createNode(link.destination,link.weight);
-	edges.update({
+	var fromNode = chart.createNode(link.source,0);
+	var toNode = chart.createNode(link.destination,link.weight);
+	chart.createEdge({
 		id : fromNode.id+"-"+toNode.id,
 		from : fromNode.id,
 		to : toNode.id
@@ -127,70 +120,11 @@ function updateStatus(){
 	
 }
 
-function createNode(page, weight){
-	if(!weight){
-		weight = 0;
-	}
-	var node = {id:page.id, color: color(page.responseCode), value: 5+weight, mass:1, title : page.url, label : "" }
-	var oldNode = nodes.get(node.id);
-	if(oldNode){
-		oldNode.color = node.color;
-		oldNode.value += weight;
-		oldNode.mass += node.mass;
-		nodes.update(oldNode);
-		node = oldNode;
-	}else{
-		nodes.add(node);
-	}
-	return node;
-}
 
-function color(responseCode){
-	var color;
-	if(responseCode == 0){
-		color = "blue";
-	}
-	else if(responseCode>=200&&responseCode<300){
-		color = "#00FF00";
-	}else if(responseCode > 300){
-		color = "#FF0000"
-	}
-	return color;
-}
 
-function setupGraph(){
-	var data = {
-		nodes : nodes,
-		edges : edges
-	};
 
-	var container = $('#graph').get(0);
-	var options = {
-		nodes : {
-			radius : 5,
-			shape : "dot"
-		},
-		edges : {
-			style: "arrow"
-		},
-		physics: {barnesHut: {gravitationalConstant: -16350, centralGravity: 0.75, springLength: 120, springConstant: 0.159, damping: 0.16}},
-		stabilize: false,
-		tooltip : {
-			delay : 300,
-			fontColor : "black",
-			fontSize : 11, // px
-			fontFace : "verdana",
-			color : {
-				border : "#666",
-				background : "#FFFFC6"
-			}
-		}
-	};
-	graph = new vis.Graph(container, data, options);
-	graph.on('select', function(properties) {
-	   console.log(properties);
-	  });
-}
+
+
 
 function start(){
 	reset();
@@ -228,7 +162,7 @@ $(document).ready(function() {
 		$("#disconnect").show();
 	});
 	$("#draw").click(function(){
-		setupGraph();
+		chart.start();
 	});
 	$("#draw").hide();
 	$("#dump").click(function(){
@@ -245,6 +179,81 @@ $(document).ready(function() {
 
 
 
+
+
+function CrawlerGraph(){
+	var self = this;
+	
+	self.graph;
+	
+	self.nodes = new vis.DataSet();
+	self.edges = new vis.DataSet();
+	
+	var container = $('#graph').get(0);
+	var options = {
+			nodes : {
+				radius : 5,
+				shape : "dot"
+			},
+			edges : {
+				style: "arrow"
+			},
+			physics: {barnesHut: {gravitationalConstant: -16350, centralGravity: 0.75, springLength: 120, springConstant: 0.159, damping: 0.16}},
+			stabilize: false,
+			tooltip : {
+				delay : 300,
+				fontColor : "black",
+				fontSize : 11, // px
+				fontFace : "verdana",
+				color : {
+					border : "#666",
+					background : "#FFFFC6"
+				}
+			}
+		};
+	
+	self.start = function(){
+		self.graph = new vis.Graph(container, {nodes:self.nodes, edges:self.edges}, options);
+		self.graph.on('select', function(properties) {
+		   console.log(properties);
+		  });
+	}
+	
+	self.createNode = function(page, weight){
+		if(!weight){
+			weight = 0;
+		}
+		var node = {id:page.id, color: self.color(page.responseCode), value: 5+weight, mass:1, title : page.url, label : "" }
+		var oldNode = nodes.get(node.id);
+		if(oldNode){
+			oldNode.color = node.color;
+			oldNode.value += weight;
+			oldNode.mass += node.mass;
+			self.nodes.update(oldNode);
+			node = oldNode;
+		}else{
+			self.nodes.add(node);
+		}
+		return node;
+	}
+	
+	self.addEdge = function (edge){
+		self.edges.update(edge);
+	}
+	 self.color = function(responseCode){
+		var color;
+		if(responseCode == 0){
+			color = "blue";
+		}
+		else if(responseCode>=200&&responseCode<300){
+			color = "#00FF00";
+		}else if(responseCode > 300){
+			color = "#FF0000"
+		}
+		return color;
+	}
+	
+}
 
 
 

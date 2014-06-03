@@ -1,5 +1,7 @@
 package org.cloudfoundry.samples.crawler.web;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.cloudfoundry.samples.crawler.domain.CrawlerSession;
 import org.cloudfoundry.samples.crawler.domain.Page;
 import org.cloudfoundry.samples.crawler.services.CrawlerService;
@@ -23,7 +25,8 @@ public class CrawlerController {
 	
 	@RequestMapping(consumes="application/json", produces="application/json", method = RequestMethod.POST, value="/start")
 	@ResponseBody
-	public CrawlerSession start(@RequestBody CrawlerSession config){
+	public CrawlerSession start(@RequestBody CrawlerSession config, HttpServletRequest request){
+		request.getSession(true);
 		CrawlerSession session = new CrawlerSession();
 		String url = config.getUrl().startsWith("http://") ? config.getUrl() : "http://"+config.getUrl();
 		session.setUrl(config.getUrl());

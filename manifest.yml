@@ -3,12 +3,8 @@ applications:
 - name: crawler
   memory: 512M
   instances: 2
-  host: crawler
+  host: crawler2
   domain: northeast1.fe.gopivotal.com
   path: build/libs/cf-scale-0.1.0.jar
   services:
-    rabbitmq-crawler:
-      label: p-rabbitmq
-      provider: pivotal
-      version: 3.2.4
-      plan: standard
+  - rabbitmq-crawler

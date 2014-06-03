@@ -13,7 +13,6 @@ public class WebApp implements WebApplicationInitializer {
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
-		System.out.println("##################### FUCK SPRING BOOT ");
 		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
 		ctx.getEnvironment().addActiveProfile("local");
 		ctx.setServletContext(servletContext);
