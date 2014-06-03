@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+
 import org.cloudfoundry.samples.crawler.domain.StompConfig;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.config.java.AbstractCloudConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -21,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CloudConfig extends AbstractCloudConfig{
 	
 	
-	@Autowired
 	private ObjectMapper customMapper;
 	
 	@Autowired
@@ -57,5 +60,9 @@ public class CloudConfig extends AbstractCloudConfig{
 	}
 
 	
-	
+	@PostConstruct
+	public void setup(){
+		this.customMapper = new ObjectMapper();
+		customMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 }
